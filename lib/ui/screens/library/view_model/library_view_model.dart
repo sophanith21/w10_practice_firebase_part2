@@ -45,7 +45,7 @@ class LibraryViewModel extends ChangeNotifier {
       // 1- Fetch songs
       List<Song> songs = await songRepository.fetchSongs();
 
-      // 2- Fethc artist
+      // 2- Fetch artist
       List<Artist> artists = await artistRepository.fetchArtists();
 
       // 3- Create the mapping artistid-> artist
@@ -62,12 +62,43 @@ class LibraryViewModel extends ChangeNotifier {
           .toList();
 
       this.data = AsyncValue.success(data);
-
     } catch (e) {
       // 3- Fetch is unsucessfull
       data = AsyncValue.error(e);
     }
     notifyListeners();
+  }
+
+  Future<void> incrSongLikeCount(LibraryItemData itemData) async {
+    if (data.state == AsyncValueState.success) {
+      final songIndex = data.data!.indexWhere(
+        (e) => e.song.id == itemData.song.id,
+      );
+      data.data!.replaceRange(songIndex, songIndex + 1, [
+        LibraryItemData(
+          song: itemData.song.copyWith(likeCount: itemData.song.likeCount + 1),
+          artist: itemData.artist,
+        ),
+      ]);
+      notifyListeners();
+      Song? result = await songRepository.updateSongLikeCount(itemData.song);
+
+      if (result != null) {
+        data.data!.replaceRange(songIndex, songIndex + 1, [
+          LibraryItemData(song: result, artist: itemData.artist),
+        ]);
+      } else {
+        data.data!.replaceRange(songIndex, songIndex + 1, [
+          LibraryItemData(
+            song: itemData.song.copyWith(
+              likeCount: itemData.song.likeCount - 1,
+            ),
+            artist: itemData.artist,
+          ),
+        ]);
+      }
+      notifyListeners();
+    }
   }
 
   bool isSongPlaying(Song song) => playerState.currentSong == song;

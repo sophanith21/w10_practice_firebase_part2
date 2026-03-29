@@ -1,16 +1,14 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:w10_practice_firebase_part2/data/repositories/firebase_api.dart';
 
 import '../../../model/artist/artist.dart';
 import '../../dtos/artist_dto.dart';
 import 'artist_repository.dart';
 
 class ArtistRepositoryFirebase implements ArtistRepository {
-  final Uri artistsUri = Uri.https(
-    'test-a2a77-default-rtdb.asia-southeast1.firebasedatabase.app',
-    '/artists.json',
-  );
+  final Uri artistsUri = Uri.https(FirebaseApi.path, '/artists.json');
 
   @override
   Future<List<Artist>> fetchArtists() async {

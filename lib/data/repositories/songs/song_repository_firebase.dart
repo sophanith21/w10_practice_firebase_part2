@@ -1,16 +1,15 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:w10_practice_firebase_part2/data/repositories/firebase_api.dart';
 
 import '../../../model/songs/song.dart';
 import '../../dtos/song_dto.dart';
 import 'song_repository.dart';
 
 class SongRepositoryFirebase extends SongRepository {
-  final Uri songsUri = Uri.https(
-    'test-a2a77-default-rtdb.asia-southeast1.firebasedatabase.app',
-    '/songs.json',
-  );
+  static String songCollectionKey = "songs";
+  final Uri songsUri = Uri.https(FirebaseApi.path, '$songCollectionKey.json');
 
   @override
   Future<List<Song>> fetchSongs() async {
@@ -33,4 +32,20 @@ class SongRepositoryFirebase extends SongRepository {
 
   @override
   Future<Song?> fetchSongById(String id) async {}
+
+  @override
+  Future<Song?> updateSongLikeCount(Song song) async {
+    final http.Response response = await http.patch(
+      songsUri.replace(path: '$songCollectionKey/${song.id}.json'),
+      body: jsonEncode({SongDto.likeCountKey: song.likeCount + 1}),
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      if (responseData.containsKey(SongDto.likeCountKey)) {
+        return song.copyWith(likeCount: responseData[SongDto.likeCountKey]);
+      }
+    }
+    return null;
+  }
 }
