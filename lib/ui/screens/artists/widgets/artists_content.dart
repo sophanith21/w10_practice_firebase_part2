@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
- 
+
 import '../../../../model/artist/artist.dart';
 import '../../../theme/theme.dart';
 import '../../../utils/async_value.dart';
@@ -32,9 +32,13 @@ class ArtistsContent extends StatelessWidget {
 
       case AsyncValueState.success:
         List<Artist> artists = asyncValue.data!;
-        content = ListView.builder(
-          itemCount: artists.length,
-          itemBuilder: (context, index) => ArtistTile(artist: artists[index]),
+        content = RefreshIndicator(
+          onRefresh: () => mv.fetchArtists(forceFetch: true),
+          child: ListView.builder(
+            physics: AlwaysScrollableScrollPhysics(),
+            itemCount: artists.length,
+            itemBuilder: (context, index) => ArtistTile(artist: artists[index]),
+          ),
         );
     }
 

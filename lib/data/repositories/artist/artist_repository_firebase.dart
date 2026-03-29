@@ -10,8 +10,12 @@ import 'artist_repository.dart';
 class ArtistRepositoryFirebase implements ArtistRepository {
   final Uri artistsUri = Uri.https(FirebaseApi.path, '/artists.json');
 
+  List<Artist>? _artistsCache;
   @override
-  Future<List<Artist>> fetchArtists() async {
+  Future<List<Artist>> fetchArtists({bool forceFetch = false}) async {
+    if (_artistsCache != null && !forceFetch) {
+      return _artistsCache!;
+    }
     final http.Response response = await http.get(artistsUri);
 
     if (response.statusCode == 200) {
@@ -22,6 +26,7 @@ class ArtistRepositoryFirebase implements ArtistRepository {
       for (final entry in songJson.entries) {
         result.add(ArtistDto.fromJson(entry.key, entry.value));
       }
+      _artistsCache = result;
       return result;
     } else {
       // 2- Throw exception if any issue

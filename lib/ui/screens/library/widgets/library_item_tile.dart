@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:w10_practice_firebase_part2/ui/states/player_state.dart';
 import '../view_model/library_item_data.dart';
 
 class LibraryItemTile extends StatelessWidget {
@@ -44,6 +45,11 @@ class LibraryItemTile extends StatelessWidget {
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
+              Text(
+                isPlaying ? "Playing" : "",
+                style: TextStyle(color: Colors.amber),
+              ),
+              SizedBox(width: 8),
               IconButton(
                 onPressed: () => onLike(data),
                 icon: Icon(Icons.thumb_up),

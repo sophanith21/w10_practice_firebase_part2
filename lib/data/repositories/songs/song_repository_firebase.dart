@@ -11,8 +11,13 @@ class SongRepositoryFirebase extends SongRepository {
   static String songCollectionKey = "songs";
   final Uri songsUri = Uri.https(FirebaseApi.path, '$songCollectionKey.json');
 
+  List<Song>? _songsCache;
+
   @override
-  Future<List<Song>> fetchSongs() async {
+  Future<List<Song>> fetchSongs({bool forceFetch = false}) async {
+    if (_songsCache != null && !forceFetch) {
+      return _songsCache!;
+    }
     final http.Response response = await http.get(songsUri);
 
     if (response.statusCode == 200) {
@@ -23,6 +28,7 @@ class SongRepositoryFirebase extends SongRepository {
       for (final entry in songJson.entries) {
         result.add(SongDto.fromJson(entry.key, entry.value));
       }
+      _songsCache = result;
       return result;
     } else {
       // 2- Throw expcetion if any issue
