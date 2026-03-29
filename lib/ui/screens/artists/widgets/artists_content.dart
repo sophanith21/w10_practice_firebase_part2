@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:w10_practice_firebase_part2/ui/screens/artist_detail/artist_detail_screen.dart';
+import 'package:w10_practice_firebase_part2/ui/screens/artist_detail/widget/artist_detail_content.dart';
 
 import '../../../../model/artist/artist.dart';
 import '../../../theme/theme.dart';
@@ -7,8 +9,22 @@ import '../../../utils/async_value.dart';
 import '../../../widgets/song/artist_tile.dart';
 import '../view_model/artists_view_model.dart';
 
-class ArtistsContent extends StatelessWidget {
+class ArtistsContent extends StatefulWidget {
   const ArtistsContent({super.key});
+
+  @override
+  State<ArtistsContent> createState() => _ArtistsContentState();
+}
+
+class _ArtistsContentState extends State<ArtistsContent> {
+  void onArtistTap(Artist artist) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ArtistDetailScreen(artist: artist),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +53,10 @@ class ArtistsContent extends StatelessWidget {
           child: ListView.builder(
             physics: AlwaysScrollableScrollPhysics(),
             itemCount: artists.length,
-            itemBuilder: (context, index) => ArtistTile(artist: artists[index]),
+            itemBuilder: (context, index) => InkWell(
+              onTap: () => onArtistTap(artists[index]),
+              child: ArtistTile(artist: artists[index]),
+            ),
           ),
         );
     }
@@ -48,7 +67,7 @@ class ArtistsContent extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(height: 16),
-          Text("Library", style: AppTextStyles.heading),
+          Text("Artists", style: AppTextStyles.heading),
           SizedBox(height: 50),
 
           Expanded(child: content),

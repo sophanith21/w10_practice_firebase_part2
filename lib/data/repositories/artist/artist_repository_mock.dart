@@ -1,3 +1,6 @@
+import 'package:w10_practice_firebase_part2/model/artist/comment.dart';
+import 'package:w10_practice_firebase_part2/model/songs/song.dart';
+
 import '../../../model/artist/artist.dart';
 import 'artist_repository.dart';
 
@@ -19,5 +22,23 @@ class ArtistRepositoryMock implements ArtistRepository {
         orElse: () => throw Exception("No artist with id $id in the database"),
       );
     });
+  }
+
+  @override
+  Future<List<Comment>> fetchCommentsByArtistId(String artistId) {
+    // TODO: implement fetchCommentsByArtistId
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Comment> addComment(Comment comment) {
+    // TODO: implement addComment
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<Song>> fetchSongsByArtistId(String artistId) {
+    // TODO: implement fetchSongsByArtistId
+    throw UnimplementedError();
   }
 }
